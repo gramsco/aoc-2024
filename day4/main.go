@@ -1,8 +1,10 @@
 package main
 
-func solvePart1(s string) int {
-	return 0
-}
+import (
+	"fmt"
+)
 
 func main() {
+	txt := newPuzzleFromInput()
+	fmt.Printf("Part1: %d\n", solvePart1(txt))
 }

@@ -13,7 +13,8 @@ SMSMSASXSS
 SAXAMASAAA
 MAMMMXMMMM
 MXMXAXMASX`
-	result := solvePart1(puzzle)
+	result := solvePart1(
+		puzzle)
 	if result != 18 {
 		t.Fatalf("expected 18, received %d", result)
 	}
