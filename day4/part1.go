@@ -126,7 +126,7 @@ func bottom(puzzle []string, topIndex int, leftIndex int) int {
 	a := string(puzzle[topIndex+2][leftIndex+0])
 	s := string(puzzle[topIndex+3][leftIndex+0])
 
-	if x+m+a+s == "XMAS" {
+	if x+m+a+s == XMAS {
 		return 1
 	}
 	return 0
