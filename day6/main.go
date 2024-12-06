@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
+	"sync/atomic"
 )
 
 func main() {
@@ -13,13 +15,21 @@ func main() {
 	guardPath := getGuardPath(puzzle)
 	fmt.Printf("Part1 : %d\n", len(getGuardPath(puzzle)))
 
-	count := 0
+	var ops atomic.Uint32
+	var wg sync.WaitGroup
 	for _, coords := range guardPath {
-		if isLoopyObstacle(puzzle, coords) {
-			count++
-		}
+		wg.Add(1)
+
+		go func() {
+			if isLoopyObstacle(puzzle, coords) {
+				ops.Add(1)
+			}
+			wg.Done()
+		}()
 	}
-	fmt.Printf("Part2: %d\n", count)
+
+	wg.Wait()
+	fmt.Printf("Part2: %d\n", ops.Load())
 
 }
 
