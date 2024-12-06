@@ -89,3 +89,14 @@ func TestValidUpdate(t *testing.T) {
 	}
 
 }
+
+func TestFixInvalid(t *testing.T) {
+	rules := []string{"97", "75", "47", "61", "53", "29", "13"}
+
+	result := getFixedHalf(rules, []string{"75", "97", "47", "61", "53"})
+
+	if result != 47 {
+		t.Fatalf("Expected %d, received %d", 47, result)
+	}
+
+}

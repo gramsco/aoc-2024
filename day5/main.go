@@ -15,9 +15,7 @@ type RulesAndPages struct {
 	updates [][]string
 }
 
-func main() {
-	rp := ParsePuzzle()
-
+func part1(rp RulesAndPages) int {
 	sum := 0
 	for _, update := range rp.updates {
 
@@ -26,15 +24,36 @@ func main() {
 
 		if isUpdateValid(rules, update) {
 			half, err := strconv.Atoi(update[len(update)/2])
-
 			if err != nil {
 				panic(err)
 			}
 			sum += half
 		}
 	}
+	return sum
+}
 
-	fmt.Println(sum)
+func part2(rp RulesAndPages) int {
+	sum := 0
+	for _, update := range rp.updates {
+
+		graph := rp.rules.filter(update)
+		rules := graph.topologicalSort()
+
+		if !isUpdateValid(rules, update) {
+			sum += getFixedHalf(rules, update)
+		}
+	}
+	return sum
+}
+
+func main() {
+	puzzle := ParsePuzzle()
+
+	fmt.Printf("Part1 = %d\n", part1(puzzle))
+
+	fmt.Printf("Part2 = %d\n", part2(puzzle))
+
 }
 
 func ParsePuzzle() RulesAndPages {
@@ -75,4 +94,22 @@ func isUpdateValid(sortedRules []string, update []string) bool {
 	}
 
 	return strings.Join(actualRules, "") == strings.Join(update, "")
+}
+
+func getFixedHalf(sortedRules []string, update []string) int {
+
+	actualRules := []string{}
+
+	for _, rule := range sortedRules {
+		if slices.Contains(update, rule) {
+			actualRules = append(actualRules, rule)
+		}
+	}
+
+	half, err := strconv.Atoi(actualRules[len(actualRules)/2])
+	if err != nil {
+		panic(err)
+	}
+	return half
+
 }
