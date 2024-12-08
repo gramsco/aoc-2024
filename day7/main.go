@@ -4,17 +4,17 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"math"
 	"os"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	fmt.Printf("Result part1 : %d\n", part1())
+	fmt.Printf("Result part1 : %d\n", scanPuzzle(false))
+	fmt.Printf("Result part2 : %d\n", scanPuzzle(true))
 }
 
-func part1() int {
+func scanPuzzle(part2 bool) int {
 	file, err := os.Open("day7/puzzle")
 	if err != nil {
 		log.Fatal(err)
@@ -26,49 +26,39 @@ func part1() int {
 	for scanner.Scan() {
 		txt := scanner.Text()
 		parsed := parseStr(txt)
-		count += ResultOrZero(parsed[0], parsed[1:]...)
-
+		count += reduceCompute(parsed[0], parsed[1:], part2)
 	}
-
 	return count
 }
 
-func calculate(n []int, operations []string) int {
-	result := n[0]
-	for i := 0; i < len(operations); i++ {
-		operation := operations[i]
-		to_add := n[i+1]
-		if operation == "add" {
-			result = result + to_add
-		}
-		if operation == "multiply" {
-			result = result * to_add
-		}
-
+func concat(a, b int) int {
+	res, err := strconv.Atoi(strconv.Itoa(a) + strconv.Itoa(b))
+	if err != nil {
+		panic(err)
 	}
-	return result
+	return res
 }
 
-// Ok that one is from chatGPT -_-
-func binaryString(num, width int) string {
-	binary := strconv.FormatInt(int64(num), 2)
-	// Pad with leading zeros if necessary
-	if len(binary) < width {
-		padding := width - len(binary)
-		return fmt.Sprintf("%0*s", padding+len(binary), binary)
+func reduceCompute(total int, elements []int, part2 bool) int {
+	if len(elements) == 1 {
+		if elements[0] == total {
+			return total
+		}
+		return 0
 	}
-	// Trim to width if binary length exceeds width
-	return binary[len(binary)-width:]
-}
+	if n := reduceCompute(total, append([]int{elements[0] + elements[1]}, elements[2:]...), part2); n != 0 {
+		return n
+	}
+	if n := reduceCompute(total, append([]int{elements[0] * elements[1]}, elements[2:]...), part2); n != 0 {
+		return n
+	}
 
-func ResultOrZero(total int, elements ...int) int {
-	for operation := range int(math.Pow(2.0, float64(len(elements)-1))) {
-		list := ExtractOperation(operation, len(elements)-1)
-		r := calculate(elements, list)
-		if total == r {
-			return r
+	if part2 {
+		if n := reduceCompute(total, append([]int{concat(elements[0], elements[1])}, elements[2:]...), part2); n != 0 {
+			return n
 		}
 	}
+
 	return 0
 }
 
@@ -85,20 +75,5 @@ func parseStr(s string) []int {
 		result = append(result, parsed)
 	}
 
-	return result
-}
-
-func ExtractOperation(binary int, length int) []string {
-
-	s := binaryString(binary, length)
-
-	result := []string{}
-	for _, c := range s {
-		if c == '0' {
-			result = append(result, "add")
-		} else {
-			result = append(result, "multiply")
-		}
-	}
 	return result
 }
