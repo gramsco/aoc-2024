@@ -7,6 +7,10 @@ type Coord struct {
 	x int
 }
 
+func (c *Coord) isNil() bool {
+	return c.x == -1 || c.y == -1
+}
+
 func NilCoord() Coord {
 	return Coord{-1, -1}
 }

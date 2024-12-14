@@ -49,11 +49,11 @@ func part2(s string) int {
 
 func visit(puzzle []string, currentCoordinates Coord, target int, peaksFound *[]Coord, isPart2 bool) *[]Coord {
 
-	if currentCoordinates.y == -1 || currentCoordinates.x == -1 {
+	if currentCoordinates.isNil() {
 		return nil
 	}
 
-	if target == 10 {
+	if target > 9 {
 		f := *peaksFound
 		if isPart2 {
 			*peaksFound = append(*peaksFound, currentCoordinates)
